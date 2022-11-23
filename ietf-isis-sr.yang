@@ -10,24 +10,36 @@ module ietf-isis-sr {
       "RFC 8349 - A YANG Data Model for Routing
                   Management (NMDA Version)";
   }
+
+  import ietf-inet-types {
+    prefix inet;
+    reference 
+      "RFC 6991 - Common YANG Data Types";
+  }
+
   import ietf-segment-routing-common {
     prefix sr-cmn;
     reference
       "RFC 9020 - YANG Data Model for Segment Routing";
   }
+
   import ietf-segment-routing-mpls {
     prefix sr-mpls;
     reference
       "RFC 9020 - YANG Data Model for Segment Routing";
   }
+  
   import ietf-isis {
     prefix isis;
+    reference
+      "RFC xxxx - YANG Data Model for IS-IS Protocol
+       TO BE UPDATED";
   }
+  
   import iana-routing-types {
     prefix iana-rt-types;
     reference
-      "RFC 8294 - Common YANG Data Types for the
-       Routing Area";
+      "RFC 8294 - Common YANG Data Types for the Routing Area";
   }
 
   organization
@@ -35,9 +47,8 @@ module ietf-isis-sr {
   contact
     "WG List:  <mailto:lsr@ietf.org>
 
-     Editor:    Stephane Litkowski
+     Author:    Stephane Litkowski
                <mailto:stephane.litkowski@orange.com>
-
      Author:    Acee Lindem
                <mailto:acee@cisco.com>
      Author:    Yingzhen Qu
@@ -82,7 +93,7 @@ module ietf-isis-sr {
   reference
     "RFC XXXX";
 
-  revision 2022-08-09 {
+  revision 2022-08-18 {
     description
       "Initial revision.";
     reference
@@ -353,16 +364,16 @@ module ietf-isis-sr {
     list adjacency-sid {
       key "value";
       config false;
+      leaf value {
+        type uint32;
+        description
+          "Value of the Adj-SID.";
+      }
       leaf af {
         type iana-rt-types:address-family;
         description
           "Address-family associated with the
            segment ID";
-      }
-      leaf value {
-        type uint32;
-        description
-          "Value of the Adj-SID.";
       }
       leaf weight {
         type uint8;
@@ -387,6 +398,11 @@ module ietf-isis-sr {
        for prefixes.";
     list sid-list {
       key "value";
+      leaf value {
+        type uint32;
+        description
+          "Value of the prefix-SID.";
+      }
       container perfix-sid-flags {
         leaf-list bits {
           type identityref {
@@ -404,11 +420,6 @@ module ietf-isis-sr {
         description
           "Algorithm to be used for path computation.";
       }
-      leaf value {
-        type uint32;
-        description
-          "Value of the prefix-SID.";
-      }
       description
         "List of segments.";
     }
@@ -420,6 +431,11 @@ module ietf-isis-sr {
        for adjacencies.";
     list sid-list {
       key "value";
+      leaf value {
+        type uint32;
+        description
+          "Value of the Adj-SID.";
+      }
       container adj-sid-flags {
         leaf-list bits {
           type identityref {
@@ -444,11 +460,6 @@ module ietf-isis-sr {
            associated with the SID value. This is only
            used on LAN adjacencies.";
       }
-      leaf value {
-        type uint32;
-        description
-          "Value of the Adj-SID.";
-      }
       description
         "List of segments.";
     }
@@ -456,11 +467,12 @@ module ietf-isis-sr {
 
   grouping segment-routing-binding-tlv {
     list segment-routing-bindings {
-      key "fec range";
-      leaf fec {
-        type string;
+      key "prefix range";
+      leaf prefix {
+        type inet:ip-prefix;
         description
-          "IP (v4 or v6) range to be bound to SIDs.";
+          "The prefix represents the Forwarding Equivalence
+           Class at the tail end of the advertised path.";
       }
       leaf range {
         type uint16;
@@ -501,8 +513,7 @@ module ietf-isis-sr {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../rt:type, 'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -521,8 +532,7 @@ module ietf-isis-sr {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../rt:type, 'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -536,8 +546,7 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:fast-reroute" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../rt:type, 'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -547,11 +556,12 @@ module ietf-isis-sr {
       if-feature "ti-lfa";
       leaf enable {
         type boolean;
+        default false;
         description
           "Enables TI-LFA computation.";
       }
       description
-        "TILFA configuration.";
+        "TI-LFA configuration.";
     }
   }
 
@@ -559,8 +569,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:fast-reroute/isis:lfa/isis:remote-lfa" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type," 
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -570,9 +580,11 @@ module ietf-isis-sr {
     leaf use-segment-routing-path {
       if-feature "remote-lfa-sr";
       type boolean;
+      default false;
       description
-        "force remote LFA to use segment routing
-         path instead of LDP path.";
+        "Force remote LFA to use segment routing path instead of LDP
+         path. The value of this leaf is in effect only when
+         remote-lfa is enabled.";
     }
   }
 
@@ -582,8 +594,7 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:adjacencies/isis:adjacency" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -597,8 +608,7 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:router-capabilities" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -614,8 +624,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:extended-is-neighbor/isis:neighbor" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type," 
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -628,8 +638,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:mt-is-neighbor/isis:neighbor" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -642,8 +652,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:extended-ipv4-reachability/isis:prefixes" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -656,8 +666,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:mt-extended-ipv4-reachability/isis:prefixes" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -670,8 +680,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:ipv6-reachability/isis:prefixes" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -684,8 +694,8 @@ module ietf-isis-sr {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:mt-ipv6-reachability/isis:prefixes" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
@@ -697,8 +707,8 @@ module ietf-isis-sr {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp" {
-    when "/rt:routing/rt:control-plane-protocols/"
-       + "rt:control-plane-protocol/rt:type = 'isis:isis'" {
+    when "derived-from-or-self(../../../../rt:type,"
+          + "'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
