@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-14" ipr="trust200902" category="std" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-15" ipr="trust200902" category="std" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="isis-sr-yang">YANG Data Model for IS-IS Segment Routing</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-13"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-15"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -42,7 +42,7 @@
       </address>
     </author>
     <author fullname="Jeff Tantsura" initials="J" surname="Tantsura">
-      <organization>Microsoft</organization>
+      <organization></organization>
       <address>
         <email>jefftant.ietf@gmail.com</email>
       </address>
@@ -93,7 +93,7 @@ Datastore Architecture (NMDA) <xref target="RFC8342" format="default"/>.</t>
    is an augmentation of the IS-IS base model.</t>
       <t>The IS-IS SR YANG module requires support for the base segment routing
    module <xref target="RFC9020" format="default"/>, which defines the global segment
-   routing configuration independent of any specific routing protocol configuration, and support of IS-IS base model <xref target="I-D.ietf-isis-yang-isis-cfg" format="default"/>
+   routing configuration independent of any specific routing protocol configuration, and support of IS-IS base model <xref target="RFC9130" format="default"/>
    which defines basic IS-IS configuration and state.</t>
       <t>The figure below describes the overall structure of the isis-sr
       YANG module:</t>
@@ -295,8 +295,7 @@ module ietf-isis-sr {
   import ietf-isis {
     prefix isis;
     reference
-      "RFC xxxx - YANG Data Model for IS-IS Protocol
-       TO BE UPDATED";
+      "RFC 9130 - YANG Data Model for IS-IS Protocol";
   }
   
   import iana-routing-types {
@@ -331,7 +330,7 @@ module ietf-isis-sr {
      This YANG model conforms to the Network Management
      Datastore Architecture (NMDA) as described in RFC 8342.
 
-     Copyright (c) 2022 IETF Trust and the persons identified as
+     Copyright (c) 2023 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
 
      Redistribution and use in source and binary forms, with or
@@ -356,7 +355,7 @@ module ietf-isis-sr {
   reference
     "RFC XXXX";
 
-  revision 2022-08-18 {
+  revision 2023-02-19 {
     description
       "Initial revision.";
     reference
@@ -1175,7 +1174,7 @@ module ietf-isis-sr {
         <seriesInfo name="RFC" value="8667"/>
         <seriesInfo name="DOI" value="10.17487/RFC8667"/>
       </reference>
-      <reference anchor="I-D.ietf-isis-yang-isis-cfg" target="https://www.ietf.org/archive/id/draft-ietf-isis-yang-isis-cfg-42.txt" xml:base="https://bib.ietf.org/public/rfc/bibxml-ids/reference.I-D.ietf-isis-yang-isis-cfg.xml">
+      <reference anchor="RFC9130" target="https://www.rfc-editor.org/info/rfc9130" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9130.xml">
         <front>
           <title>YANG Data Model for IS-IS Protocol</title>
           <author fullname="Stephane Litkowski">
@@ -1298,7 +1297,7 @@ module ietf-isis-sr {
           </author>
           <date month="May" year="2021"/>
           <abstract>
-            <t>This document defines a YANG data model ([RFC6020], [RFC7950]) for segment routing ([I-D.ietf-spring-segment-routing]) configuration and operation.  This YANG model is intended to be used on network elements to configure or operate segment routing.  This document defines also generic containers that SHOULD be reused by IGP protocol modules to support segment routing.</t>
+            <t>This document defines a YANG data model ([RFC7950]) for segment routing ([I-D.ietf-spring-segment-routing]) configuration and operation.  This YANG model is intended to be used on network elements to configure or operate segment routing.  This document defines also generic containers that SHOULD be reused by IGP protocol modules to support segment routing.</t>
           </abstract>
         </front>
         <seriesInfo name="RFC" value="9020"/>
