@@ -544,13 +544,71 @@ module ietf-isis-sr {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface"
-        + "/isis:fast-reroute" {
-    when "derived-from-or-self(../../../../rt:type, 'isis:isis')" {
+        + "/isis:fast-reroute/isis:lfa" {
+    when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
       description
         "This augment ISIS routing protocol when used";
     }
     description
-      "This augments ISIS IP FRR with TILFA.";
+      "This augments ISIS interface IP FRR with TILFA.";
+    container ti-lfa {
+      if-feature "ti-lfa";
+      leaf enable {
+        type boolean;
+        default false;
+        description
+          "Enables TI-LFA computation.";
+      }
+      container tie-breaker {
+        leaf node-protection {
+          type uint8;
+          description
+            "Enable node protection.";
+        }
+        leaf srlg-disjoint {
+          type uint8;
+          description
+            "Enable SRLG protection.";
+        }
+      }
+      description
+        "TI-LFA configuration.";
+    }
+  }
+
+    augment "/rt:routing/"
+        + "rt:control-plane-protocols/rt:control-plane-protocol"
+        + "/isis:isis/isis:interfaces/isis:interface"
+        + "/isis:fast-reroute/isis:lfa/isis:level-1" {
+    when "derived-from-or-self(../../../../../../rt:type, 'isis:isis')" {
+      description
+        "This augment ISIS routing protocol when used";
+    }
+    description
+      "This augments ISIS interface level-1 IP FRR with TILFA.";
+    container ti-lfa {
+      if-feature "ti-lfa";
+      leaf enable {
+        type boolean;
+        default false;
+        description
+          "Enables TI-LFA computation.";
+      }
+      description
+        "TI-LFA configuration.";
+    }
+  }
+
+  augment "/rt:routing/"
+        + "rt:control-plane-protocols/rt:control-plane-protocol"
+        + "/isis:isis/isis:interfaces/isis:interface"
+        + "/isis:fast-reroute/isis:lfa/isis:level-2" {
+    when "derived-from-or-self(../../../../../../rt:type, 'isis:isis')" {
+      description
+        "This augment ISIS routing protocol when used";
+    }
+    description
+      "This augments ISIS IP interface level-2 FRR with TILFA.";
     container ti-lfa {
       if-feature "ti-lfa";
       leaf enable {
