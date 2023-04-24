@@ -570,9 +570,12 @@ module ietf-isis-sr {
           description
             "Enable SRLG protection.";
         }
+        description
+          "Tie-breaker with priorities.";
       }
       description
-        "TI-LFA configuration.";
+        "Topology Independent Loop Free Alternate
+         (TI-LFA) support.";
     }
   }
 
