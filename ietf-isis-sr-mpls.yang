@@ -1,8 +1,8 @@
-module ietf-isis-sr {
+module ietf-isis-sr-mpls {
   yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:ietf-isis-sr";
+  namespace "urn:ietf:params:xml:ns:yang:ietf-isis-sr-mpls";
   
-  prefix isis-sr;
+  prefix isis-sr-mpls;
 
   import ietf-routing {
     prefix rt;
@@ -56,7 +56,7 @@ module ietf-isis-sr {
      Author:    Stephane Litkowski
                 <mailto:slitkows.ietf@gmail.com>
      Author:    Yingzhen Qu
-                <mailto:yingzhen.ietf@gmail.com.com>
+                <mailto:yingzhen.ietf@gmail.com>
      Author:    Acee Lindem
                 <mailto:acee.ietf@gmail.com>
      Author:    Pushpasis Sarkar
@@ -68,8 +68,9 @@ module ietf-isis-sr {
     ";
   description
     "The YANG module defines the generic configuration and
-     operational state for Segment Routing ISIS extensions, which is
-     common across all of the vendor implementations.
+     operational state for Segment Routing ISIS extensions for the
+     MPLS data plane, which is common across all of the vendor
+     implementations.
 
      This YANG model conforms to the Network Management
      Datastore Architecture (NMDA) as described in RFC 8342.
@@ -99,18 +100,21 @@ module ietf-isis-sr {
   reference
     "RFC XXXX";
 
-  revision 2023-11-19 {
+  revision 2023-12-16 {
     description
       "Initial revision.";
     reference
-      "RFC XXXX: A YANG Data Model for IS-IS Segment Routing";
+      "RFC XXXX: A YANG Data Model for IS-IS Segment Routing for the
+                 MPLS Data Plane";
   }
 
   /* Identities */
 
   identity sr-capability {
     description
-      "Base identity for ISIS SR-Capabilities sub-TLV flgs";
+      "Base identity for ISIS SR-Capabilities sub-TLV flags";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing";
   }
 
   identity mpls-ipv4 {
@@ -131,7 +135,9 @@ module ietf-isis-sr {
 
   identity prefix-sid-bit {
     description
-      "Base identity for prefix sid sub-tlv bits.";
+      "Base identity for prefix SID sub-TLV bits.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing";
   }
 
   identity r-bit {
@@ -172,7 +178,9 @@ module ietf-isis-sr {
 
   identity adj-sid-bit {
     description
-      "Base identity for adj sid sub-tlv bits.";
+      "Base identity for Adj-SID sub-TLV bits.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing";
   }
 
   identity f-bit {
@@ -214,6 +222,8 @@ module ietf-isis-sr {
   identity sid-binding-bit {
     description
       "Base identity for sid binding tlv bits.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing";
   }
 
   identity af-bit {
@@ -231,7 +241,7 @@ module ietf-isis-sr {
   identity sf-bit {
     base sid-binding-bit;
     description
-      "S flag. If set, the binding label tlv should be flooded
+      "S flag. If set, the binding label TLV should be flooded
        across the entire routing domain.";
   }
 
@@ -260,6 +270,9 @@ module ietf-isis-sr {
     description
       "Topology-Independent Loop-Free Alternate (TI-LFA)
        computation using segment routing.";
+    reference
+      "draft-ietf-rtgwg-segment-routing-ti-lfa -
+       Topology-Independent Fast Reroute using Segment Routing";
   }
 
   /* Groupings */
@@ -292,7 +305,7 @@ module ietf-isis-sr {
             base sr-capability;
           }
           description
-            "SR Capability sub-tlv flags list.";
+            "SR Capability sub-TLV flags list.";
         }
         description
           "SR Capability Flags.";
@@ -413,13 +426,13 @@ module ietf-isis-sr {
         description
           "Value of the prefix-SID.";
       }
-      container perfix-sid-flags {
+      container prefix-sid-flags {
         leaf-list bits {
           type identityref {
             base prefix-sid-bit;
           }
           description
-            "Prefix SID Sub-TLV flag bits list.";
+            "Prefix SID sub-TLV flag bits list.";
         }
         description
           "Describes flags associated with the
@@ -454,10 +467,10 @@ module ietf-isis-sr {
             base adj-sid-bit;
           }
           description
-            "Adj sid sub-tlv flags list.";
+            "Adj-SID sub-TLV flags list.";
         }
         description
-          "Adj-sid sub-tlv flags.";
+          "Adj-SID sub-TLV flags.";
       }
       leaf weight {
         type uint8;
@@ -527,7 +540,7 @@ module ietf-isis-sr {
         + "/isis:isis" {
     when "derived-from-or-self(../rt:type, 'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol configuration
@@ -546,7 +559,7 @@ module ietf-isis-sr {
         + "/isis:isis/isis:interfaces/isis:interface" {
     when "derived-from-or-self(../../../rt:type, 'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol configuration
@@ -561,7 +574,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../rt:type,"
         + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS interface IP FRR with TILFA.";
@@ -624,7 +637,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
         + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS interface level-1 IP FRR with TILFA.";
@@ -648,7 +661,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
         + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS IP interface level-2 FRR with TILFA.";
@@ -672,7 +685,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type," 
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS remoteLFA config with
@@ -696,7 +709,7 @@ module ietf-isis-sr {
         + "/isis:adjacencies/isis:adjacency" {
     when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol configuration
@@ -710,7 +723,7 @@ module ietf-isis-sr {
         + "/isis:router-capabilities" {
     when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB router capability.";
@@ -727,7 +740,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type," 
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB neighbor.";
@@ -741,7 +754,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB neighbor.";
@@ -755,7 +768,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB prefix.";
@@ -769,7 +782,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB prefix.";
@@ -783,7 +796,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB prefix.";
@@ -797,7 +810,7 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../../../rt:type,"
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB prefix.";
@@ -810,12 +823,10 @@ module ietf-isis-sr {
     when "derived-from-or-self(../../../../rt:type,"
           + "'isis:isis')" {
       description
-        "This augment ISIS routing protocol when used";
+        "This augments ISIS routing protocol when used";
     }
     description
       "This augments ISIS protocol LSDB.";
     uses segment-routing-binding-tlv;
   }
-
-  /* Notifications */
 }
