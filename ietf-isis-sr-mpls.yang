@@ -564,7 +564,19 @@ module ietf-isis-sr-mpls {
     description
       "This augments ISIS protocol configuration
        with segment routing.";
-    uses sr-mpls:igp-interface;
+    uses sr-mpls:igp-interface {
+      augment segment-routing/adjacency-sid/adj-sids {
+        when "../../../interface-type = 'broadcast'" {
+          description
+            "This augments LAN interface adj-sid with system-id.";
+        }
+        leaf neighbor-system-id {
+          type isis:system-id;
+          description
+            "Neighbor system ID.";
+        }
+      }
+    }
   }
 
   augment "/rt:routing/"
