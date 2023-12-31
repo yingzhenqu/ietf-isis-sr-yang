@@ -93,7 +93,7 @@ module ietf-isis-sr-mpls {
   reference
     "RFC XXXX";
 
-  revision 2023-12-16 {
+  revision 2023-12-30 {
     description
       "Initial revision.";
     reference
@@ -559,10 +559,12 @@ module ietf-isis-sr-mpls {
        with segment routing.";
     uses sr-mpls:igp-interface {
       augment "segment-routing/adjacency-sid/adj-sids" {
-        when "../../../interface-type = 'broadcast'" {
+        when "../../../isis:interface-type = 'broadcast'" {
           description
-            "This augments LAN interface adj-sid with system-id.";
+            "This augments broadcast interface.";
         }
+        description
+          "This augments LAN interface adj-sid with system-id.";
         leaf neighbor-system-id {
           type isis:system-id;
           description

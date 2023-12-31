@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-18" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-19" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing for the MPLS Data Plane</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-18"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-19"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -145,10 +145,11 @@ module: ietf-isis-sr-mpls
     +--rw segment-routing
        +--rw adjacency-sid
           +--rw adj-sids* [value]
-          |  +--rw value-type?   enumeration
-          |  +--rw value         uint32
-          |  +--rw protected?    boolean
-          |  +--rw weight?       uint8
+          |  +--rw value-type?           enumeration
+          |  +--rw value                 uint32
+          |  +--rw protected?            boolean
+          |  +--rw weight?               uint8
+          |  +--rw neighbor-system-id?   isis:system-id
           +--rw advertise-adj-group-sid* [group-id]
           |  +--rw group-id    uint32
           +--rw advertise-protection?      enumeration
@@ -284,11 +285,10 @@ module: ietf-isis-sr-mpls
           <xref target="RFC8667"/>, <xref target="RFC9020"/>, and <xref target="RFC9130"/>
           are referenced in the YANG model.
         </t>
-        <sourcecode name="ietf-isis-sr-mpls@2023-12-16.yang" type="" markers="true"><![CDATA[
+        <sourcecode name="ietf-isis-sr-mpls@2023-12-30.yang" type="" markers="true"><![CDATA[
 module ietf-isis-sr-mpls {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-isis-sr-mpls";
-  
   prefix isis-sr-mpls;
 
   import ietf-routing {
@@ -297,37 +297,31 @@ module ietf-isis-sr-mpls {
       "RFC 8349 - A YANG Data Model for Routing
                   Management (NMDA Version)";
   }
-
   import ietf-inet-types {
     prefix inet;
-    reference 
+    reference
       "RFC 6991 - Common YANG Data Types";
   }
-
   import ietf-segment-routing-common {
     prefix sr-cmn;
     reference
       "RFC 9020 - YANG Data Model for Segment Routing";
   }
-
   import ietf-segment-routing-mpls {
     prefix sr-mpls;
     reference
       "RFC 9020 - YANG Data Model for Segment Routing";
   }
-  
   import ietf-isis {
     prefix isis;
     reference
       "RFC 9130 - YANG Data Model for IS-IS Protocol";
   }
-  
   import iana-routing-types {
     prefix iana-rt-types;
     reference
       "RFC 8294 - Common YANG Data Types for the Routing Area";
   }
-
   import ietf-routing-types {
     prefix rt-types;
     reference
@@ -387,7 +381,7 @@ module ietf-isis-sr-mpls {
   reference
     "RFC XXXX";
 
-  revision 2023-12-16 {
+  revision 2023-12-30 {
     description
       "Initial revision.";
     reference
@@ -851,7 +845,21 @@ module ietf-isis-sr-mpls {
     description
       "This augments ISIS protocol configuration
        with segment routing.";
-    uses sr-mpls:igp-interface;
+    uses sr-mpls:igp-interface {
+      augment "segment-routing/adjacency-sid/adj-sids" {
+        when "../../../isis:interface-type = 'broadcast'" {
+          description
+            "This augments broadcast interface.";
+        }
+        description
+          "This augments LAN interface adj-sid with system-id.";
+        leaf neighbor-system-id {
+          type isis:system-id;
+          description
+            "Neighbor system ID.";
+        }
+      }
+    }
   }
 
   augment "/rt:routing/"
@@ -859,7 +867,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:fast-reroute/isis:lfa" {
     when "derived-from-or-self(../../../../../rt:type,"
-        + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -869,7 +877,7 @@ module ietf-isis-sr-mpls {
       if-feature "ti-lfa";
       leaf enable {
         type boolean;
-        default false;
+        default "false";
         description
           "Enables TI-LFA computation.";
       }
@@ -879,7 +887,7 @@ module ietf-isis-sr-mpls {
                     protection tie-breaker";
           leaf priority {
             type uint8;
-            default 128;
+            default "128";
             description
               "Priority for node protection tie-breaker with
                a lower priority being more preferred.";
@@ -895,7 +903,7 @@ module ietf-isis-sr-mpls {
                     disjoint tie-breaker";
           leaf priority {
             type uint8;
-            default 128;
+            default "128";
             description
               "Priority for SRLG disjoint tie-breaker with
                a lower priority being more preferred.";
@@ -922,7 +930,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:fast-reroute/isis:lfa/isis:level-1" {
     when "derived-from-or-self(../../../../../../rt:type,"
-        + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -932,7 +940,7 @@ module ietf-isis-sr-mpls {
       if-feature "ti-lfa";
       leaf enable {
         type boolean;
-        default false;
+        default "false";
         description
           "Enables TI-LFA computation.";
       }
@@ -946,7 +954,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:fast-reroute/isis:lfa/isis:level-2" {
     when "derived-from-or-self(../../../../../../rt:type,"
-        + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -956,7 +964,7 @@ module ietf-isis-sr-mpls {
       if-feature "ti-lfa";
       leaf enable {
         type boolean;
-        default false;
+        default "false";
         description
           "Enables TI-LFA computation.";
       }
@@ -969,8 +977,8 @@ module ietf-isis-sr-mpls {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:fast-reroute/isis:lfa/isis:remote-lfa" {
-    when "derived-from-or-self(../../../../../../rt:type," 
-          + "'isis:isis')" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -980,7 +988,7 @@ module ietf-isis-sr-mpls {
     leaf use-segment-routing-path {
       if-feature "remote-lfa-sr";
       type boolean;
-      default false;
+      default "false";
       description
         "Force remote LFA to use segment routing path instead of LDP
          path. The value of this leaf is in effect only when
@@ -1024,8 +1032,8 @@ module ietf-isis-sr-mpls {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:extended-is-neighbor/isis:neighbor" {
-    when "derived-from-or-self(../../../../../../rt:type," 
-          + "'isis:isis')" {
+    when "derived-from-or-self(../../../../../../rt:type,"
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -1039,7 +1047,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:mt-is-neighbor/isis:neighbor" {
     when "derived-from-or-self(../../../../../../rt:type,"
-          + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -1053,7 +1061,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:extended-ipv4-reachability/isis:prefixes" {
     when "derived-from-or-self(../../../../../../rt:type,"
-          + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -1067,7 +1075,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:mt-extended-ipv4-reachability/isis:prefixes" {
     when "derived-from-or-self(../../../../../../rt:type,"
-          + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -1081,7 +1089,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:ipv6-reachability/isis:prefixes" {
     when "derived-from-or-self(../../../../../../rt:type,"
-          + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -1095,7 +1103,7 @@ module ietf-isis-sr-mpls {
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:mt-ipv6-reachability/isis:prefixes" {
     when "derived-from-or-self(../../../../../../rt:type,"
-          + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -1108,7 +1116,7 @@ module ietf-isis-sr-mpls {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp" {
     when "derived-from-or-self(../../../../rt:type,"
-          + "'isis:isis')" {
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
