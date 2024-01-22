@@ -93,7 +93,7 @@ module ietf-isis-sr-mpls {
   reference
     "RFC XXXX";
 
-  revision 2024-01-18 {
+  revision 2024-01-22 {
     description
       "Initial revision.";
     reference
@@ -860,8 +860,9 @@ module ietf-isis-sr-mpls {
     }
     description
       "This augments ISIS protocol LSDB.";
-    list sid-binding-tlvs {
-      container sid-binding-tlv {
+    container sid-binding-tlvs {
+      list sid-binding-tlv {
+        key "prefix";
         uses sid-binding-tlv;
         description
           "Sid/label binding TLV, type 149.";
@@ -869,13 +870,15 @@ module ietf-isis-sr-mpls {
       description
         "List of sid/label binding TLVs.";
     }
-    list mt-sid-binding-tlvs {
-      container mt-sid-binding-tlvs {
+    container mt-sid-binding-tlvs {
+      list mt-sid-binding-tlv {
+        key "prefix mt-id";
         uses sid-binding-tlv;
         leaf mt-id {
           type uint16;
           description
-            "A 12-bit field containing the non-zero ID of the topology.";
+            "A 12-bit field containing the non-zero ID
+             of the topology.";
         }
         description
           "Multi-Topology SID/Label binding TLV, type 150.";

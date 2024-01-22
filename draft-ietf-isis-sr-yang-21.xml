@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-20" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-21" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing for the MPLS Data Plane</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-20"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-21"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -268,9 +268,9 @@ module: ietf-isis-sr-mpls
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp:
-    +--ro sid-binding-tlvs* []
-    |  +--ro sid-binding-tlv
-    |     +--ro prefix?                inet:ip-prefix
+    +--ro sid-binding-tlvs
+    |  +--ro sid-binding-tlv* [prefix]
+    |     +--ro prefix                 inet:ip-prefix
     |     +--ro range?                 uint16
     |     +--ro sid-binding-flags
     |     |  +--ro flags*   identityref
@@ -290,9 +290,9 @@ module: ietf-isis-sr-mpls
     |           +--ro type?     uint16
     |           +--ro length?   uint16
     |           +--ro value?    yang:hex-string
-    +--ro mt-sid-binding-tlvs* []
-       +--ro mt-sid-binding-tlvs
-          +--ro prefix?                inet:ip-prefix
+    +--ro mt-sid-binding-tlvs
+       +--ro mt-sid-binding-tlv* [prefix mt-id]
+          +--ro prefix                 inet:ip-prefix
           +--ro range?                 uint16
           +--ro sid-binding-flags
           |  +--ro flags*   identityref
@@ -312,7 +312,7 @@ module: ietf-isis-sr-mpls
           |     +--ro type?     uint16
           |     +--ro length?   uint16
           |     +--ro value?    yang:hex-string
-          +--ro mt-id?                 uint16
+          +--ro mt-id                  uint16
 
 ]]></artwork>
       </section>
@@ -325,7 +325,7 @@ module: ietf-isis-sr-mpls
           and <xref target="I-D.ietf-rtgwg-segment-routing-ti-lfa" format="default"/>
           are referenced in the YANG model.
         </t>
-        <sourcecode name="ietf-isis-sr-mpls@2024-01-18.yang" type="" markers="true"><![CDATA[
+        <sourcecode name="ietf-isis-sr-mpls@2024-01-22.yang" type="" markers="true"><![CDATA[
 module ietf-isis-sr-mpls {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-isis-sr-mpls";
@@ -421,7 +421,7 @@ module ietf-isis-sr-mpls {
   reference
     "RFC XXXX";
 
-  revision 2024-01-18 {
+  revision 2024-01-22 {
     description
       "Initial revision.";
     reference
@@ -637,7 +637,7 @@ module ietf-isis-sr-mpls {
             base sr-capability;
           }
           description
-            "SR Capability sub-TLV flags list.";
+            "SR Capability sub-TLV flags.";
         }
         description
           "SR Capability Flags.";
@@ -1188,8 +1188,9 @@ module ietf-isis-sr-mpls {
     }
     description
       "This augments ISIS protocol LSDB.";
-    list sid-binding-tlvs {
-      container sid-binding-tlv {
+    container sid-binding-tlvs {
+      list sid-binding-tlv {
+        key "prefix";
         uses sid-binding-tlv;
         description
           "Sid/label binding TLV, type 149.";
@@ -1197,13 +1198,15 @@ module ietf-isis-sr-mpls {
       description
         "List of sid/label binding TLVs.";
     }
-    list mt-sid-binding-tlvs {
-      container mt-sid-binding-tlvs {
+    container mt-sid-binding-tlvs {
+      list mt-sid-binding-tlv {
+        key "prefix mt-id";
         uses sid-binding-tlv;
         leaf mt-id {
           type uint16;
           description
-            "A 12-bit field containing the non-zero ID of the topology.";
+            "A 12-bit field containing the non-zero ID
+             of the topology.";
         }
         description
           "Multi-Topology SID/Label binding TLV, type 150.";
