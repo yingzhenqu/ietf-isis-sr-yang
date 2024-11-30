@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-22" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-23" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing for the MPLS Data Plane</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-22"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-23"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -1265,15 +1265,12 @@ module ietf-isis-sr-mpls {
       <t>Unauthorized access to any data node of these subtrees can disclose
         the operational state information of IS-IS protocol on this device.</t>
     </section>
-    <section anchor="Contributors" toc="default" numbered="true">
-      <name>Contributors</name>
-      <t>Authors would like to thank 
-	  Derek Yeung, Acee Lindem, Yi Yang
-	  for their major contributions to the draft. Also thank Reshad Rahman, and Tom Petch
-    for their thorough reviews and helpful comments.</t>
-    </section>
     <section anchor="Acknowledgements" toc="default" numbered="true">
       <name>Acknowledgements</name>
+      <t>Authors would like to thank 
+    Derek Yeung, Acee Lindem, Yi Yang
+    for their major contributions to the draft. Also thank Reshad Rahman, and Tom Petch
+    for their thorough reviews and helpful comments.</t>
       <t>MITRE has approved this document for Public Release, Distribution 
         Unlimited, with Public Release Case Number 19-3033.</t>
     </section>
