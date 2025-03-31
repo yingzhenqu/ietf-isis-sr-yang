@@ -68,7 +68,7 @@ module ietf-isis-sr-mpls {
      This YANG model conforms to the Network Management
      Datastore Architecture (NMDA) as described in RFC 8342.
 
-     Copyright (c) 2024 IETF Trust and the persons identified as
+     Copyright (c) 2025 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
 
      Redistribution and use in source and binary forms, with or
@@ -93,7 +93,7 @@ module ietf-isis-sr-mpls {
   reference
     "RFC XXXX";
 
-  revision 2024-01-22 {
+  revision 2025-01-29 {
     description
       "Initial revision.";
     reference
@@ -422,8 +422,8 @@ module ietf-isis-sr-mpls {
 
   grouping prefix-sid-sub-tlv {
     description
-      "This grouping defines segment routing prefix segment identifier
-       (prefix-sid) sub-tlv.";
+      "This grouping defines segment routing prefix segment
+       identifier (prefix-sid) sub-tlv.";
     reference
       "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
     container prefix-sid-sub-tlvs {
@@ -740,7 +740,8 @@ module ietf-isis-sr-mpls {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:interfaces/isis:interface"
         + "/isis:adjacencies/isis:adjacency" {
-    when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
+    when "derived-from-or-self(../../../../../rt:type,"
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
@@ -754,7 +755,8 @@ module ietf-isis-sr-mpls {
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
         + "/isis:router-capabilities" {
-    when "derived-from-or-self(../../../../../rt:type, 'isis:isis')" {
+    when "derived-from-or-self(../../../../../rt:type,"
+       + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
     }
