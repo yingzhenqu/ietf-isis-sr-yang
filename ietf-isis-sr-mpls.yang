@@ -90,8 +90,6 @@ module ietf-isis-sr-mpls {
 
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
-  reference
-    "RFC XXXX";
 
   revision 2025-01-29 {
     description
@@ -137,36 +135,48 @@ module ietf-isis-sr-mpls {
     base prefix-sid-flag;
     description
       "Re-advertisement Flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
   }
 
   identity n-flag {
     base prefix-sid-flag;
     description
       "Node-SID Flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
   }
 
   identity p-flag {
     base prefix-sid-flag;
     description
       "No-PHP (No Penultimate Hop-Popping) Flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
   }
 
   identity e-flag {
     base prefix-sid-flag;
     description
       "Explicit NULL Flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
   }
 
   identity v-flag {
     base prefix-sid-flag;
     description
       "Value Flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
   }
 
   identity l-flag {
     base prefix-sid-flag;
     description
       "Local Flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.1";
   }
 
   identity adj-sid-flag {
@@ -180,36 +190,48 @@ module ietf-isis-sr-mpls {
     base adj-sid-flag;
     description
       "Address-Family flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
   }
 
   identity b-flag {
     base adj-sid-flag;
     description
       "Backup flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
   }
 
   identity vi-flag {
     base adj-sid-flag;
     description
-      "Value/Index flag.";
+      "Value/Index flag - corresponds to V-Flag in reference.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
   }
 
-  identity lo-flag {
+  identity lg-flag {
     base adj-sid-flag;
     description
-      "Local flag.";
+      "Local/Global flag - corresponds to L-flag in reference.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
   }
 
   identity s-flag {
     base adj-sid-flag;
     description
       "Group flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
   }
 
   identity pe-flag {
     base adj-sid-flag;
     description
-      "Persistent flag.";
+      "Persistent flag - corresponds to P-flag in reference.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
   }
 
   identity sid-binding-flag {
@@ -222,32 +244,43 @@ module ietf-isis-sr-mpls {
   identity af-flag {
     base sid-binding-flag;
     description
-      "Address-Family flag.";
+      "Address-Family flag - corresponds to F-Flag in reference.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   identity m-flag {
     base sid-binding-flag;
     description
       "Mirror Context flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   identity sf-flag {
     base sid-binding-flag;
     description
       "S flag. If set, the binding label TLV should be flooded
-       across the entire routing domain.";
+       across the entire routing domain - corresponds to S-Flag in
+       reference.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   identity d-flag {
     base sid-binding-flag;
     description
       "Leaking flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   identity a-flag {
     base sid-binding-flag;
     description
       "Attached flag.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   /* Features */
@@ -284,15 +317,30 @@ module ietf-isis-sr-mpls {
            is necessary since it dictates the semantics of the
            SID.";
       }
-      leaf sid {
-        type uint32;
+      choice sid-value {
+        case sid-label {
+          leaf label-value {
+            type uint32 {
+              range "0 .. 1048575";
+            }
+            description
+              "A 20-bit MPLS Label";
+          }
+        }
+        case sid-index {
+          leaf index-value {
+            type uint32;
+            description
+              "Index into a label space advertised by this router.";
+          }
+        }
         description
-          "Segment Identifier (SID) - A 20 bit label or 32 bit SID.
-           If the length is set to 3, then the 20 rightmost bits
-           represent an MPLS label. If the length is set to 4, then
-           the value is a 32-bit index.";
+          "Choice of either a 20-bit MPLS label or 32-bit index into
+           an advertised label space.";
       }
     }
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   grouping sr-capability {
@@ -301,32 +349,28 @@ module ietf-isis-sr-mpls {
     reference
       "RFC 8667 - IS-IS Extensions for Segment Routing, Section 3";
     container sr-capability {
-      description
-        "Segment Routing capability.";
-      container sr-capability {
-        leaf-list sr-capability-flags {
-          type identityref {
-            base sr-capability;
-          }
-          description
-            "SR Capability sub-TLV flags.";
+      leaf-list sr-capability-flags {
+        type identityref {
+          base sr-capability;
         }
         description
-          "SR Capability Flags.";
+          "SR Capability sub-TLV flags.";
       }
-      container global-blocks {
+      description
+        "SR Capability Flags.";
+    }
+    container global-blocks {
+      description
+        "Segment Routing Global Blocks.";
+      list global-block {
         description
-          "Segment Routing Global Blocks.";
-        list global-block {
+          "Segment Routing Global Block.";
+        leaf range-size {
+          type uint32;
           description
-            "Segment Routing Global Block.";
-          leaf range-size {
-            type uint32;
-            description
-              "The SID range.";
-          }
-          uses sid-sub-tlv;
+            "The SID range.";
         }
+        uses sid-sub-tlv;
       }
     }
   }
