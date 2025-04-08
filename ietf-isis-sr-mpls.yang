@@ -91,7 +91,10 @@ module ietf-isis-sr-mpls {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2025-01-29 {
+  // RFC Ed.: Replace XXXX with actual RFC number and remove
+  // this note
+
+  revision 2025-04-14 {
     description
       "Initial revision.";
     reference
@@ -99,6 +102,9 @@ module ietf-isis-sr-mpls {
                  MPLS Data Plane";
   }
 
+  // RFC Ed.: Replace XXXX with actual RFC number.
+  // Also, replace '2025-04-14' with the module publication date
+  // in the format (YYYY-MM-DD) and remove this note.
   /* Identities */
 
   identity sr-capability {
@@ -306,6 +312,8 @@ module ietf-isis-sr-mpls {
   grouping sid-sub-tlv {
     description
       "SID/Label sub-TLV grouping.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
     container sid-sub-tlv {
       description
         "Used to advertise the SID/Label associated with a
@@ -339,15 +347,13 @@ module ietf-isis-sr-mpls {
            an advertised label space.";
       }
     }
-    reference
-      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.4";
   }
 
   grouping sr-capability {
     description
       "SR capability grouping.";
     reference
-      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 3";
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 3.1";
     container sr-capability {
       leaf-list sr-capability-flags {
         type identityref {
@@ -378,6 +384,8 @@ module ietf-isis-sr-mpls {
   grouping sr-algorithm {
     description
       "SR algorithm grouping.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 3.2";
     container sr-algorithms {
       description
         "All SR algorithms.";
@@ -418,6 +426,8 @@ module ietf-isis-sr-mpls {
       "The SRMS preference TLV is used to advertise
        a preference associated with the node that acts
        as an SR Mapping Server.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 3.4";
     container srms-preference {
       description
         "SRMS Preference TLV.";
@@ -433,6 +443,8 @@ module ietf-isis-sr-mpls {
   grouping adjacency-state {
     description
       "This grouping extends adjacency state.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
     list adjacency-sid {
       key "value";
       config false;
@@ -509,6 +521,8 @@ module ietf-isis-sr-mpls {
     description
       "This grouping defines segment routing extensions
        for adjacencies.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
     list sid-list {
       key "sid";
       container adj-sid-flags {
@@ -546,6 +560,11 @@ module ietf-isis-sr-mpls {
   }
 
   grouping sid-binding-tlv {
+    description
+      "SID/Label binding TLV, type 149.";
+    reference
+      "RFC 8667 - IS-IS Extensions for Segment Routing,
+       Section 2.4";
     leaf prefix {
       type inet:ip-prefix;
       description
@@ -586,11 +605,6 @@ module ietf-isis-sr-mpls {
          Section 2.4.5";
     }
     uses isis:unknown-tlvs;
-    description
-      "SID/Label binding TLV, type 149.";
-    reference
-      "RFC 8667 - IS-IS Extensions for Segment Routing,
-       Section 2.4";
   }
 
   /* Configuration */
