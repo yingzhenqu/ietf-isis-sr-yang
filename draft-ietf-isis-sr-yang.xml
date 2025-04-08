@@ -1222,29 +1222,34 @@ module ietf-isis-sr-mpls {
   }
 }
 ]]></sourcecode>
-      </section>
+</section>
 
-    <section anchor="Security" toc="default" numbered="true">
-      <name>Security Considerations</name>
-      <t>The YANG module specified in this document defines a schema for data
-        that is designed to be accessed via network management protocols such
-        as NETCONF <xref target="RFC6241" format="default"/> or RESTCONF <xref target="RFC8040" format="default"/>.
-        The lowest NETCONF layer is the secure transport layer, and the
-        mandatory-to-implement secure transport is Secure Shell (SSH) <xref target="RFC6242" format="default"/>.
-        The lowest RESTCONF layer is HTTPS, and the mandatory-to-implement
-        secure transport is TLS <xref target="RFC8446" format="default"/>.</t>
-      <t>The NETCONF Access Control Model (NACM) <xref target="RFC8341" format="default"/> provides
-        the means to restrict access for particular NETCONF or RESTCONF users
-        to a pre-configured subset of all available NETCONF or RESTCONF protocol
-        operations and content.</t>
-      <t>There are a number of data nodes defined in this YANG module that are
-        writable/creatable/deletable (i.e., config true, which is the
-        default). These data nodes may be considered sensitive or vulnerable
-        in some network environments. Write operations (e.g., edit-config)
-        to these data nodes without proper protection can have a negative
-        effect on network operations. These are the subtrees and data nodes
-        and their sensitivity/vulnerability:
-      </t>
+<section anchor="Security" toc="default" numbered="true">
+  <name>Security Considerations</name>
+  <t>
+    The ietf-isis-sr-mpls YANG module defines a data model that is
+    designed to be accessed via YANG-based management protocols, such as
+    NETCONF <xref target="RFC6241"/> and RESTCONF <xref target="RFC8040"/>.
+    These protocols have to use a secure transport layer (e.g., SSH
+    <xref target="RFC4252"/>, TLS <xref target="RFC8446"/>, and
+    QUIC <xref target="RFC9000"/>) and have to use mutual authentication.
+  </t>
+  <t>
+    The Network Configuration Access Control Model (NACM) <xref target="RFC8341"/>
+    provides the means to restrict access for particular NETCONF or
+    RESTCONF users to a preconfigured subset of all available NETCONF or
+    RESTCONF protocol operations and content.
+  </t>
+  <t>
+    There are a number of data nodes defined in this YANG module that are
+    writable/creatable/deletable (i.e., "config true", which is the
+    default).  All writable data nodes are likely to be reasonably
+    sensitive or vulnerable in some network environments.  Write
+    operations (e.g., edit-config) and delete operations to these data
+    nodes without proper protection or authentication can have a negative
+    effect on network operations.  The following subtrees and data nodes
+    have particular sensitivities/vulnerabilities:
+  </t>
       <ul empty="true" spacing="normal">
         <li>/isis:isis/segment-routing</li>
         <li>/isis:isis/protocol-srgb</li>
@@ -1277,8 +1282,15 @@ module ietf-isis-sr-mpls {
     Derek Yeung, Acee Lindem, Yi Yang
     for their major contributions to the draft. Also thank Reshad Rahman, and Tom Petch
     for their thorough reviews and helpful comments.</t>
-      <t>MITRE has approved this document for Public Release, Distribution 
-        Unlimited, with Public Release Case Number 19-3033.</t>
+      <t>
+        Author affiliation with The MITRE Corporation is provided for
+        identification purposes only, and is not intended to convey or imply MITRE's
+        concurrence with, or support for, the positions, opinions or viewpoints
+        expressed.  MITRE has agreed to this document for Public Release,
+        Distribution Unlimited, with Public Release Case Number 19-3033. This
+        approval allows the MITRE employee to release contributions externally and
+        does not assert authority to publish.
+      </t>
     </section>
     <section anchor="IANA" toc="default" numbered="true">
       <name>IANA Considerations</name>
@@ -1305,9 +1317,9 @@ module ietf-isis-sr-mpls {
       <name>Normative References</name>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3688.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4252.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6020.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6241.xml"/>
-      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6242.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6991.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7950.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8040.xml"/>
@@ -1320,6 +1332,7 @@ module ietf-isis-sr-mpls {
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8349.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8667.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9000.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9020.xml"/>
       <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9130.xml"/>
       <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rtgwg-segment-routing-ti-lfa.xml"/>
