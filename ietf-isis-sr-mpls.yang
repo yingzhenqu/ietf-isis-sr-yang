@@ -12,32 +12,32 @@ module ietf-isis-sr-mpls {
   import ietf-inet-types {
     prefix inet;
     reference
-      "RFC 6991 - Common YANG Data Types";
+      "RFC 6991: Common YANG Data Types";
   }
   import ietf-segment-routing-common {
     prefix sr-cmn;
     reference
-      "RFC 9020 - YANG Data Model for Segment Routing";
+      "RFC 9020: YANG Data Model for Segment Routing";
   }
   import ietf-segment-routing-mpls {
     prefix sr-mpls;
     reference
-      "RFC 9020 - YANG Data Model for Segment Routing";
+      "RFC 9020: YANG Data Model for Segment Routing";
   }
   import ietf-isis {
     prefix isis;
     reference
-      "RFC 9130 - YANG Data Model for IS-IS Protocol";
+      "RFC 9130: YANG Data Model for IS-IS Protocol";
   }
   import iana-routing-types {
     prefix iana-rt-types;
     reference
-      "RFC 8294 - Common YANG Data Types for the Routing Area";
+      "RFC 8294: Common YANG Data Types for the Routing Area";
   }
   import ietf-routing-types {
     prefix rt-types;
     reference
-      "RFC 8294 - Common YANG Data Types for the Routing Area";
+      "RFC 8294: Common YANG Data Types for the Routing Area";
   }
 
   organization
@@ -61,12 +61,8 @@ module ietf-isis-sr-mpls {
     ";
   description
     "The YANG module defines the generic configuration and
-     operational state for Segment Routing ISIS extensions for the
-     MPLS data plane, which is common across all of the vendor
-     implementations.
-
-     This YANG model conforms to the Network Management
-     Datastore Architecture (NMDA) as described in RFC 8342.
+     operational state for IS-IS Segment Routing over the
+     MPLS data plane.
 
      Copyright (c) 2025 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.

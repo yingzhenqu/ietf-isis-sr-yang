@@ -15,7 +15,7 @@
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-25" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
-    <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing for the MPLS Data Plane</title>
+    <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing over the MPLS Data Plane</title>
     <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-25"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
@@ -52,8 +52,8 @@
     <workgroup>LSR Working Group</workgroup>
 
     <abstract>
-      <t>This document defines a YANG data module that can be used to 
-        configure and manage IS-IS Segment Routing for MPLS data plane.
+      <t>This document defines a YANG data model that can be used to 
+        manage IS-IS Extensions for Segment Routing over the MPLS data plane.
       </t>
     </abstract>
   </front>
@@ -61,10 +61,10 @@
   <middle>
     <section anchor="introduction" toc="default" numbered="true">
       <name>Overview</name>
-      <t>This document defines a YANG data model <xref target="RFC7950"/> that can be used to configure
-   and manage IS-IS Segment Routing <xref target="RFC8667" format="default"/> for MPLS data plane
-   and it is an augmentation to the IS-IS YANG data model <xref target="RFC9130" format="default"/>.</t>
-      <t> The YANG module in this document conforms to the Network Management
+      <t>This document defines a YANG data model <xref target="RFC7950"/> that can be used to
+   manage IS-IS Extensions for Segment Routing <xref target="RFC8667" format="default"/> over the MPLS data plane.
+   The defined YANG data model is an augmentation to the IS-IS YANG data model <xref target="RFC9130" format="default"/>.</t>
+      <t> The YANG data model in this document conforms to the Network Management
 Datastore Architecture (NMDA) <xref target="RFC8342" format="default"/>.</t>
       <section numbered="true" toc="default">
         <name>Requirements Language</name>
@@ -76,19 +76,23 @@ Datastore Architecture (NMDA) <xref target="RFC8342" format="default"/>.</t>
       </section>
       <section numbered="true" toc="default">
         <name>Tree Diagrams</name>
-        <t>This document uses the graphical representation of data models
+        <t>This document uses the graphical representation of data model
           defined in <xref target="RFC8340" format="default"/>.</t>
       </section>
     </section>
 
     <section anchor="design" toc="default" numbered="true">
       <name>Design of the IS-IS MPLS Segment Routing Module</name>
-      <t>This document defines a YANG model for IS-IS Segment Routing for the MPLS data plane.  It
+      <t>This document defines a YANG model for IS-IS Extensions for Segment Routing over the MPLS data plane.  It
    is an augmentation of the IS-IS base model.</t>
       <t>The IS-IS SR MPLS YANG module requires support for the base segment routing
    module <xref target="RFC9020" format="default"/>, which defines the global segment
    routing configuration independent of any specific routing protocol configuration, and support of IS-IS base model <xref target="RFC9130" format="default"/>
    which defines basic IS-IS configuration and state.</t>
+
+   <t>The ietf-isis-sr-mpls data module defines both the data nodes to configure
+    IS-IS segment routing MPLS extensions and the additions to the IS-IS Link
+    State Protocol Data Units (LSPs) necessary to support MPLS segment routing.</t>
 
         <section anchor="spring-activation" toc="default" numbered="true">
           <name>Segment Routing Activation</name>
@@ -318,12 +322,12 @@ module: ietf-isis-sr-mpls
       </section>
 
       <section anchor="isis-sr-yang" toc="default" numbered="true">
-        <name>IS-IS MPLS Segment Routing YANG Module</name>
+        <name>IS-IS MPLS Segment Routing over MPLS YANG Module</name>
         <t>
           <xref target="RFC6991"/>, <xref target="RFC8102"/>, <xref target="RFC8294"/>, <xref target="RFC8349"/>,
           <xref target="RFC8667"/>, <xref target="RFC9020"/>,  <xref target="RFC9130"/>, 
           and <xref target="I-D.ietf-rtgwg-segment-routing-ti-lfa" format="default"/>
-          are referenced in the YANG model.
+          are referenced in the YANG module.
         </t>
         <sourcecode name="ietf-isis-sr-mpls@2025-01-29.yang" type="" markers="true"><![CDATA[
 module ietf-isis-sr-mpls {
