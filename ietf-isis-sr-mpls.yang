@@ -446,7 +446,6 @@ module ietf-isis-sr-mpls {
     reference
       "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
     list adjacency-sid {
-      key "value";
       config false;
       leaf value {
         type uint32;
@@ -486,7 +485,6 @@ module ietf-isis-sr-mpls {
       description
         "PrefixSID sub-tlvs.";
       list prefix-sid-sub-tlv {
-        key "sid";
         container prefix-sid-flags {
           leaf-list flags {
             type identityref {
@@ -524,7 +522,6 @@ module ietf-isis-sr-mpls {
     reference
       "RFC 8667 - IS-IS Extensions for Segment Routing, Section 2.2";
     list sid-list {
-      key "sid";
       container adj-sid-flags {
         leaf-list flags {
           type identityref {
