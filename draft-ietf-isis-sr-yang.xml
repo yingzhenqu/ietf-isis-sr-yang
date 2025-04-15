@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-25" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-27" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing over the MPLS Data Plane</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-25"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-27"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -461,7 +461,7 @@ module ietf-isis-sr-mpls {
            is necessary since it dictates the semantics of the
            SID.";
       }
-      choice sid-value {
+      choice sid {
         case sid-label {
           leaf label-value {
             type uint32 {
@@ -1208,216 +1208,6 @@ module ietf-isis-sr-mpls {
         <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8792.xml"/>
     </references>
   </references>
-    <section numbered="true" toc="default">
-        <name>IS-IS MPLS Segment Routing Module Tree</name>
-      <t>The figure below describes the overall structure of the isis-sr-mpls
-      YANG module:</t>
-      <artwork name="" type="" align="left" alt=""><![CDATA[
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis:
-  +--rw segment-routing
-  |  +--rw enabled?    boolean
-  |  +--rw bindings {mapping-server}?
-  |     +--rw advertise
-  |     |  +--rw policies*   leafref
-  |     +--rw receive?     boolean
-  +--rw protocol-srgb {sr-mpls:protocol-srgb}?
-     +--rw srgb* [lower-bound upper-bound]
-        +--rw lower-bound    uint32
-        +--rw upper-bound    uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface:
-  +--rw segment-routing
-     +--rw adjacency-sid
-        +--rw adj-sids* [value]
-        |  +--rw value-type?           enumeration
-        |  +--rw value                 uint32
-        |  +--rw protected?            boolean
-        |  +--rw weight?               uint8
-        |  +--rw neighbor-system-id    isis:system-id
-        +--rw advertise-adj-group-sid* [group-id]
-        |  +--rw group-id    uint32
-        +--rw advertise-protection?      enumeration
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface/isis:fast-reroute/isis:lfa:
-  +--rw ti-lfa {ti-lfa}?
-     +--rw enabled?                  boolean
-     +--rw selection-tie-breakers
-        +--rw node-protection!
-        |  +--rw priority?   uint8
-        +--rw srlg-disjoint!
-           +--rw priority?   uint8
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface/isis:fast-reroute/isis:lfa/isis:level-1:
-  +--rw ti-lfa {ti-lfa}?
-     +--rw enabled?   boolean
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface/isis:fast-reroute/isis:lfa/isis:level-2:
-  +--rw ti-lfa {ti-lfa}?
-     +--rw enabled?   boolean
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface/isis:fast-reroute/isis:lfa
-          /isis:remote-lfa:
-  +--rw use-segment-routing-path?   boolean {remote-lfa-sr}?
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface/isis:adjacencies/isis:adjacency:
-  +--ro adjacency-sid* []
-     +--ro value?                  uint32
-     +--ro address-family?         iana-rt-types:address-family
-     +--ro weight?                 uint8
-     +--ro protection-requested?   boolean
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:router-capabilities:
-  +--ro sr-capability
-  |  +--ro sr-capability-flags*   identityref
-  +--ro global-blocks
-  |  +--ro global-block* []
-  |     +--ro range-size?    uint32
-  |     +--ro sid-sub-tlv
-  |        +--ro length?              uint8
-  |        +--ro (sid-value)?
-  |           +--:(sid-label)
-  |           |  +--ro label-value?   uint32
-  |           +--:(sid-index)
-  |              +--ro index-value?   uint32
-  +--ro sr-algorithms
-  |  +--ro sr-algorithm*   identityref
-  +--ro local-blocks
-  |  +--ro local-block* []
-  |     +--ro range-size?    rt-types:uint24
-  |     +--ro sid-sub-tlv
-  |        +--ro length?              uint8
-  |        +--ro (sid-value)?
-  |           +--:(sid-label)
-  |           |  +--ro label-value?   uint32
-  |           +--:(sid-index)
-  |              +--ro index-value?   uint32
-  +--ro srms-preference
-     +--ro preference?   uint8
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:extended-is-neighbor
-          /isis:neighbor:
-  +--ro sid-list* []
-     +--ro adj-sid-flags
-     |  +--ro flags*   identityref
-     +--ro weight?          uint8
-     +--ro neighbor-id?     isis:system-id
-     +--ro sid?             uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:mt-is-neighbor/isis:neighbor:
-  +--ro sid-list* []
-     +--ro adj-sid-flags
-     |  +--ro flags*   identityref
-     +--ro weight?          uint8
-     +--ro neighbor-id?     isis:system-id
-     +--ro sid?             uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:extended-ipv4-reachability
-          /isis:prefixes:
-  +--ro prefix-sid-sub-tlvs
-     +--ro prefix-sid-sub-tlv* []
-        +--ro prefix-sid-flags
-        |  +--ro flags*   identityref
-        +--ro algorithm?          identityref
-        +--ro sid?                uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:mt-extended-ipv4-reachability
-          /isis:prefixes:
-  +--ro prefix-sid-sub-tlvs
-     +--ro prefix-sid-sub-tlv* []
-        +--ro prefix-sid-flags
-        |  +--ro flags*   identityref
-        +--ro algorithm?          identityref
-        +--ro sid?                uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:ipv6-reachability
-          /isis:prefixes:
-  +--ro prefix-sid-sub-tlvs
-     +--ro prefix-sid-sub-tlv* []
-        +--ro prefix-sid-flags
-        |  +--ro flags*   identityref
-        +--ro algorithm?          identityref
-        +--ro sid?                uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:mt-ipv6-reachability
-          /isis:prefixes:
-  +--ro prefix-sid-sub-tlvs
-     +--ro prefix-sid-sub-tlv* []
-        +--ro prefix-sid-flags
-        |  +--ro flags*   identityref
-        +--ro algorithm?          identityref
-        +--ro sid?                uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp:
-  +--ro sid-binding-tlvs
-  |  +--ro sid-binding-tlv* [prefix]
-  |     +--ro prefix                 inet:ip-prefix
-  |     +--ro range?                 uint16
-  |     +--ro sid-binding-flags
-  |     |  +--ro flags*   identityref
-  |     +--ro prefix-sid-sub-tlvs* []
-  |     |  +--ro prefix-sid-sub-tlvs
-  |     |     +--ro prefix-sid-sub-tlv* []
-  |     |        +--ro prefix-sid-flags
-  |     |        |  +--ro flags*   identityref
-  |     |        +--ro algorithm?          identityref
-  |     |        +--ro sid?                uint32
-  |     +--ro sid-sub-tlvs* []
-  |     |  +--ro sid-sub-tlv
-  |     |     +--ro length?              uint8
-  |     |     +--ro (sid-value)?
-  |     |        +--:(sid-label)
-  |     |        |  +--ro label-value?   uint32
-  |     |        +--:(sid-index)
-  |     |           +--ro index-value?   uint32
-  |     +--ro unknown-tlvs
-  |        +--ro unknown-tlv* []
-  |           +--ro type?     uint16
-  |           +--ro length?   uint16
-  |           +--ro value?    yang:hex-string
-  +--ro mt-sid-binding-tlvs
-     +--ro mt-sid-binding-tlv* [prefix mt-id]
-        +--ro prefix                 inet:ip-prefix
-        +--ro range?                 uint16
-        +--ro sid-binding-flags
-        |  +--ro flags*   identityref
-        +--ro prefix-sid-sub-tlvs* []
-        |  +--ro prefix-sid-sub-tlvs
-        |     +--ro prefix-sid-sub-tlv* []
-        |        +--ro prefix-sid-flags
-        |        |  +--ro flags*   identityref
-        |        +--ro algorithm?          identityref
-        |        +--ro sid?                uint32
-        +--ro sid-sub-tlvs* []
-        |  +--ro sid-sub-tlv
-        |     +--ro length?              uint8
-        |     +--ro (sid-value)?
-        |        +--:(sid-label)
-        |        |  +--ro label-value?   uint32
-        |        +--:(sid-index)
-        |           +--ro index-value?   uint32
-        +--ro unknown-tlvs
-        |  +--ro unknown-tlv* []
-        |     +--ro type?     uint16
-        |     +--ro length?   uint16
-        |     +--ro value?    yang:hex-string
-        +--ro mt-id                  uint16
-]]></artwork>
-      </section>
 
     <section numbered="true" toc="default">
         <name>A Configuration Example</name>
@@ -1504,5 +1294,218 @@ augment /rt:routing/rt:control-plane-protocols
 }
   ]]></artwork>
 </section>
+
+    <section numbered="true" toc="default">
+        <name>IS-IS MPLS Segment Routing Module Tree</name>
+      <t>The figure below describes the overall structure of the isis-sr-mpls
+      YANG module:</t>
+      <artwork name="" type="" align="left" alt=""><![CDATA[
+module: ietf-isis-sr-mpls
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis:
+    +--rw segment-routing
+    |  +--rw enabled?    boolean
+    |  +--rw bindings {mapping-server}?
+    |     +--rw advertise
+    |     |  +--rw policies*   -> /rt:routing/sr:segment-routing
+    |     |                       /sr-mpls:sr-mpls/bindings
+    |     |                       /mapping-server/policy/name
+    |     +--rw receive?     boolean
+    +--rw protocol-srgb {sr-mpls:protocol-srgb}?
+       +--rw srgb* [lower-bound upper-bound]
+          +--rw lower-bound    uint32
+          +--rw upper-bound    uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:interfaces
+          /isis:interface:
+    +--rw segment-routing
+       +--rw adjacency-sid
+          +--rw adj-sids* [value]
+          |  +--rw value-type?           enumeration
+          |  +--rw value                 uint32
+          |  +--rw protected?            boolean
+          |  +--rw weight?               uint8
+          |  +--rw neighbor-system-id    isis:system-id
+          +--rw advertise-adj-group-sid* [group-id]
+          |  +--rw group-id    uint32
+          +--rw advertise-protection?      enumeration
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:interfaces
+          /isis:interface/isis:fast-reroute/isis:lfa:
+    +--rw ti-lfa {ti-lfa}?
+       +--rw enabled?                  boolean
+       +--rw selection-tie-breakers
+          +--rw node-protection!
+          |  +--rw priority?   uint8
+          +--rw srlg-disjoint!
+             +--rw priority?   uint8
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:interfaces
+          /isis:interface/isis:fast-reroute/isis:lfa/isis:level-1:
+    +--rw ti-lfa {ti-lfa}?
+       +--rw enabled?   boolean
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:interfaces
+          /isis:interface/isis:fast-reroute/isis:lfa/isis:level-2:
+    +--rw ti-lfa {ti-lfa}?
+       +--rw enabled?   boolean
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:interfaces
+          /isis:interface/isis:fast-reroute/isis:lfa/isis:remote-lfa:
+    +--rw use-segment-routing-path?   boolean {remote-lfa-sr}?
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:interfaces
+          /isis:interface/isis:adjacencies/isis:adjacency:
+    +--ro adjacency-sid* []
+       +--ro value?                  uint32
+       +--ro address-family?         iana-rt-types:address-family
+       +--ro weight?                 uint8
+       +--ro protection-requested?   boolean
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:router-capabilities:
+    +--ro sr-capability
+    |  +--ro sr-capability-flags*   identityref
+    +--ro global-blocks
+    |  +--ro global-block* []
+    |     +--ro range-size?    uint32
+    |     +--ro sid-sub-tlv
+    |        +--ro length?              uint8
+    |        +--ro (sid)?
+    |           +--:(sid-label)
+    |           |  +--ro label-value?   uint32
+    |           +--:(sid-index)
+    |              +--ro index-value?   uint32
+    +--ro sr-algorithms
+    |  +--ro sr-algorithm*   identityref
+    +--ro local-blocks
+    |  +--ro local-block* []
+    |     +--ro range-size?    rt-types:uint24
+    |     +--ro sid-sub-tlv
+    |        +--ro length?              uint8
+    |        +--ro (sid)?
+    |           +--:(sid-label)
+    |           |  +--ro label-value?   uint32
+    |           +--:(sid-index)
+    |              +--ro index-value?   uint32
+    +--ro srms-preference
+       +--ro preference?   uint8
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:extended-is-neighbor
+          /isis:neighbor:
+    +--ro sid-list* []
+       +--ro adj-sid-flags
+       |  +--ro flags*   identityref
+       +--ro weight?          uint8
+       +--ro neighbor-id?     isis:system-id
+       +--ro sid?             uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:mt-is-neighbor/isis:neighbor:
+    +--ro sid-list* []
+       +--ro adj-sid-flags
+       |  +--ro flags*   identityref
+       +--ro weight?          uint8
+       +--ro neighbor-id?     isis:system-id
+       +--ro sid?             uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:extended-ipv4-reachability
+          /isis:prefixes:
+    +--ro prefix-sid-sub-tlvs
+       +--ro prefix-sid-sub-tlv* []
+          +--ro prefix-sid-flags
+          |  +--ro flags*   identityref
+          +--ro algorithm?          identityref
+          +--ro sid?                uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:mt-extended-ipv4-reachability
+          /isis:prefixes:
+    +--ro prefix-sid-sub-tlvs
+       +--ro prefix-sid-sub-tlv* []
+          +--ro prefix-sid-flags
+          |  +--ro flags*   identityref
+          +--ro algorithm?          identityref
+          +--ro sid?                uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:ipv6-reachability/isis:prefixes:
+    +--ro prefix-sid-sub-tlvs
+       +--ro prefix-sid-sub-tlv* []
+          +--ro prefix-sid-flags
+          |  +--ro flags*   identityref
+          +--ro algorithm?          identityref
+          +--ro sid?                uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp/isis:mt-ipv6-reachability
+          /isis:prefixes:
+    +--ro prefix-sid-sub-tlvs
+       +--ro prefix-sid-sub-tlv* []
+          +--ro prefix-sid-flags
+          |  +--ro flags*   identityref
+          +--ro algorithm?          identityref
+          +--ro sid?                uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/isis:isis/isis:database
+          /isis:levels/isis:lsp:
+    +--ro sid-binding-tlvs
+    |  +--ro sid-binding-tlv* [prefix]
+    |     +--ro prefix                 inet:ip-prefix
+    |     +--ro range?                 uint16
+    |     +--ro sid-binding-flags
+    |     |  +--ro flags*   identityref
+    |     +--ro prefix-sid-sub-tlvs* []
+    |     |  +--ro prefix-sid-sub-tlvs
+    |     |     +--ro prefix-sid-sub-tlv* []
+    |     |        +--ro prefix-sid-flags
+    |     |        |  +--ro flags*   identityref
+    |     |        +--ro algorithm?          identityref
+    |     |        +--ro sid?                uint32
+    |     +--ro sid-sub-tlvs* []
+    |     |  +--ro sid-sub-tlv
+    |     |     +--ro length?              uint8
+    |     |     +--ro (sid)?
+    |     |        +--:(sid-label)
+    |     |        |  +--ro label-value?   uint32
+    |     |        +--:(sid-index)
+    |     |           +--ro index-value?   uint32
+    |     +--ro unknown-tlvs
+    |        +--ro unknown-tlv* []
+    |           +--ro type?     uint16
+    |           +--ro length?   uint16
+    |           +--ro value?    yang:hex-string
+    +--ro mt-sid-binding-tlvs
+       +--ro mt-sid-binding-tlv* [prefix mt-id]
+          +--ro prefix                 inet:ip-prefix
+          +--ro range?                 uint16
+          +--ro sid-binding-flags
+          |  +--ro flags*   identityref
+          +--ro prefix-sid-sub-tlvs* []
+          |  +--ro prefix-sid-sub-tlvs
+          |     +--ro prefix-sid-sub-tlv* []
+          |        +--ro prefix-sid-flags
+          |        |  +--ro flags*   identityref
+          |        +--ro algorithm?          identityref
+          |        +--ro sid?                uint32
+          +--ro sid-sub-tlvs* []
+          |  +--ro sid-sub-tlv
+          |     +--ro length?              uint8
+          |     +--ro (sid)?
+          |        +--:(sid-label)
+          |        |  +--ro label-value?   uint32
+          |        +--:(sid-index)
+          |           +--ro index-value?   uint32
+          +--ro unknown-tlvs
+          |  +--ro unknown-tlv* []
+          |     +--ro type?     uint16
+          |     +--ro length?   uint16
+          |     +--ro value?    yang:hex-string
+          +--ro mt-id                  uint16
+]]></artwork>
+      </section>
+
   </back>
 </rfc>
