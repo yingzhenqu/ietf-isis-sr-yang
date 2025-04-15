@@ -325,7 +325,7 @@ module ietf-isis-sr-mpls {
            is necessary since it dictates the semantics of the
            SID.";
       }
-      choice sid-value {
+      choice sid {
         case sid-label {
           leaf label-value {
             type uint32 {
