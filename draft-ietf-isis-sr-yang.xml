@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-27" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-28" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing over the MPLS Data Plane</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-27"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-28"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -133,7 +133,7 @@ Datastore Architecture (NMDA) <xref target="RFC8342" format="default"/>.</t>
         </t>
 <figure>
     <artwork><![CDATA[
-    <CODE BEGINS> file "ietf-ietf-sr-mpls@2025-04-14.yang"
+    <CODE BEGINS> file "ietf-ietf-sr-mpls@2025-04-15.yang"
 module ietf-isis-sr-mpls {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-isis-sr-mpls";
@@ -227,7 +227,7 @@ module ietf-isis-sr-mpls {
   // RFC Ed.: Replace XXXX with actual RFC number and remove
   // this note
 
-  revision 2025-04-14 {
+  revision 2025-04-15 {
     description
       "Initial revision.";
     reference
@@ -238,7 +238,7 @@ module ietf-isis-sr-mpls {
   // RFC Ed.: Replace XXXX with actual RFC number.
   // Also, replace '2025-04-14' with the module publication date
   // in the format (YYYY-MM-DD) and remove this note.
-  
+
   /* Features */
 
   feature remote-lfa-sr {
@@ -655,37 +655,41 @@ module ietf-isis-sr-mpls {
        for adjacencies.";
     reference
       "RFC 8667: IS-IS Extensions for Segment Routing, Section 2.2";
-    list sid-list {
+    container adj-sid-sub-tlvs {
       description
-        "List of segments.";
-      container adj-sid-flags {
+        "Adj-SID optional sub-TLVs.";
+      list adj-sid-sub-tlv {
         description
-          "Adj-SID sub-TLV flags.";
-        leaf-list flag {
-          type identityref {
-            base adj-sid-flag;
-          }
+          "List of segments.";
+        container adj-sid-flags {
           description
-            "Adj-SID sub-TLV flags list.";
+            "Adj-SID sub-TLV flags.";
+          leaf-list flag {
+            type identityref {
+              base adj-sid-flag;
+            }
+            description
+              "Adj-SID sub-TLV flags list.";
+          }
         }
-      }
-      leaf weight {
-        type uint8;
-        description
-          "The value represents the weight of the Adj-SID
-           for the purpose of load balancing.";
-      }
-      leaf neighbor-id {
-        type isis:system-id;
-        description
-          "Describes the system ID of the neighbor
-           associated with the SID value. This is only
-           used on LAN adjacencies.";
-      }
-      leaf sid {
-        type uint32;
-        description
-          "Value of the Adj-SID.";
+        leaf weight {
+          type uint8;
+          description
+            "The value represents the weight of the Adj-SID
+             for the purpose of load balancing.";
+        }
+        leaf neighbor-id {
+          type isis:system-id;
+          description
+            "Describes the system ID of the neighbor
+             associated with the SID value. This is only
+             used on LAN adjacencies.";
+        }
+        leaf sid {
+          type uint32;
+          description
+            "Value of the Adj-SID.";
+        }
       }
     }
   }
@@ -943,8 +947,8 @@ module ietf-isis-sr-mpls {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
-        + "/isis:router-capabilities" {
-    when "derived-from-or-self(../../../../../rt:type,"
+        + "/isis:router-capabilities/isis:router-capability" {
+    when "derived-from-or-self(../../../../../../rt:type,"
        + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
@@ -960,8 +964,9 @@ module ietf-isis-sr-mpls {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
-        + "/isis:extended-is-neighbor/isis:neighbor" {
-    when "derived-from-or-self(../../../../../../rt:type,"
+        + "/isis:extended-is-neighbor/isis:neighbor/isis:instances"
+        + "/isis:instance" {
+    when "derived-from-or-self(../../../../../../../../rt:type,"
        + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
@@ -974,8 +979,9 @@ module ietf-isis-sr-mpls {
   augment "/rt:routing/"
         + "rt:control-plane-protocols/rt:control-plane-protocol"
         + "/isis:isis/isis:database/isis:levels/isis:lsp"
-        + "/isis:mt-is-neighbor/isis:neighbor" {
-    when "derived-from-or-self(../../../../../../rt:type,"
+        + "/isis:mt-is-neighbor/isis:neighbor/isis:instances"
+        + "/isis:instance" {
+    when "derived-from-or-self(../../../../../../../../rt:type,"
        + "'isis:isis')" {
       description
         "This augments ISIS routing protocol when used";
@@ -1352,8 +1358,8 @@ module: ietf-isis-sr-mpls
           +--rw lower-bound    uint32
           +--rw upper-bound    uint32
   augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/isis:isis/isis:interfaces
-          /isis:interface:
+          /rt:control-plane-protocol/isis:isis
+          /isis:interfaces/isis:interface:
     +--rw segment-routing
        +--rw adjacency-sid
           +--rw adj-sids* [value]
@@ -1399,7 +1405,8 @@ module: ietf-isis-sr-mpls
        +--ro protection-requested?   boolean
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:router-capabilities:
+          /isis:levels/isis:lsp/isis:router-capabilities
+          /isis:router-capability:
     +--ro sr-capability
     |  +--ro sr-capability-flag*   identityref
     +--ro global-blocks
@@ -1429,22 +1436,25 @@ module: ietf-isis-sr-mpls
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:extended-is-neighbor
-          /isis:neighbor:
-    +--ro sid-list* []
-       +--ro adj-sid-flags
-       |  +--ro flag*   identityref
-       +--ro weight?          uint8
-       +--ro neighbor-id?     isis:system-id
-       +--ro sid?             uint32
+          /isis:neighbor/isis:instances/isis:instance:
+    +--ro adj-sid-sub-tlvs
+       +--ro adj-sid-sub-tlv* []
+          +--ro adj-sid-flags
+          |  +--ro flag*   identityref
+          +--ro weight?          uint8
+          +--ro neighbor-id?     isis:system-id
+          +--ro sid?             uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
-          /isis:levels/isis:lsp/isis:mt-is-neighbor/isis:neighbor:
-    +--ro sid-list* []
-       +--ro adj-sid-flags
-       |  +--ro flag*   identityref
-       +--ro weight?          uint8
-       +--ro neighbor-id?     isis:system-id
-       +--ro sid?             uint32
+          /isis:levels/isis:lsp/isis:mt-is-neighbor/isis:neighbor
+          /isis:instances/isis:instance:
+    +--ro adj-sid-sub-tlvs
+       +--ro adj-sid-sub-tlv* []
+          +--ro adj-sid-flags
+          |  +--ro flag*   identityref
+          +--ro weight?          uint8
+          +--ro neighbor-id?     isis:system-id
+          +--ro sid?             uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:extended-ipv4-reachability
@@ -1500,7 +1510,7 @@ module: ietf-isis-sr-mpls
     |     |        |  +--ro flag*   identityref
     |     |        +--ro algorithm?          identityref
     |     |        +--ro sid?                uint32
-    |     +--ro sid-sub-tlvs* []
+    |     +--ro sid-sub-tlv* []
     |     |  +--ro sid-sub-tlv
     |     |     +--ro length?              uint8
     |     |     +--ro (sid)?
@@ -1526,7 +1536,7 @@ module: ietf-isis-sr-mpls
           |        |  +--ro flag*   identityref
           |        +--ro algorithm?          identityref
           |        +--ro sid?                uint32
-          +--ro sid-sub-tlvs* []
+          +--ro sid-sub-tlv* []
           |  +--ro sid-sub-tlv
           |     +--ro length?              uint8
           |     +--ro (sid)?
