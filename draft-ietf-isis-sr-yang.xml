@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-29" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-ietf-isis-sr-yang-30" ipr="trust200902" category="std" consensus="true" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.13.1 -->
   <front>
     <title abbrev="IS-IS SR MPLS YANG">A YANG Data Model for IS-IS Segment Routing over the MPLS Data Plane</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-29"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-isis-sr-yang-30"/>
     <author fullname="Stephane Litkowski" initials="S" surname="Litkowski">
       <organization>Cisco Systems</organization>
       <address>
@@ -133,7 +133,7 @@ Datastore Architecture (NMDA) <xref target="RFC8342" format="default"/>.</t>
         </t>
 <figure>
     <artwork><![CDATA[
-    <CODE BEGINS> file "ietf-ietf-sr-mpls@2025-04-15.yang"
+    <CODE BEGINS> file "ietf-isis-sr-mpls@2025-04-22.yang"
 module ietf-isis-sr-mpls {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-isis-sr-mpls";
@@ -227,7 +227,7 @@ module ietf-isis-sr-mpls {
   // RFC Ed.: Replace XXXX with actual RFC number and remove
   // this note
 
-  revision 2025-04-15 {
+  revision 2025-04-22 {
     description
       "Initial revision.";
     reference
@@ -236,7 +236,7 @@ module ietf-isis-sr-mpls {
   }
 
   // RFC Ed.: Replace XXXX with actual RFC number.
-  // Also, replace '2025-04-14' with the module publication date
+  // Also, replace '2025-04-22' with the module publication date
   // in the format (YYYY-MM-DD) and remove this note.
 
   /* Features */
@@ -443,6 +443,46 @@ module ietf-isis-sr-mpls {
 
   /* Groupings */
 
+  grouping sid-tlv-encoding {
+    description
+      "SID TLV Encoding -  20-bit label or 32-bit SID index whose
+       interpretation is dependent on the TLV length (3 for an
+       MPLS label or 4 for a 32-bit value)  or the TLV V-Flag and
+       L-Flag settings:
+
+        If the  V-Flag is set to 0 and L-Flag is set to 0:
+        The SID/Index/Label field is a 4-octet index defining
+        the offset in the SID/Label space advertised by this
+        router.
+
+        If V-Flag is set to 1 and L-Flag is set to 1: The
+        ID/Index/Label field is a 3-octet local label where the
+        20 rightmost bits are used for encoding the label value.";
+    reference
+      "RFC 8667: IS-IS Extensions for Segment Routing, Section 2.1.1.1";
+    choice sid {
+      case sid-label {
+        leaf label-value {
+          type uint32 {
+            range "0 .. 1048575";
+          }
+          description
+            "A 20-bit MPLS Label";
+        }
+      }
+      case sid-index {
+        leaf index-value {
+          type uint32;
+          description
+            "Index into a label space advertised by this router.";
+        }
+      }
+      description
+        "Choice of either a 20-bit MPLS label or 32-bit index into
+         an advertised label space.";
+    }
+  }
+
   grouping sid-sub-tlv {
     description
       "SID/Label sub-TLV grouping.";
@@ -459,27 +499,7 @@ module ietf-isis-sr-mpls {
            is necessary since it dictates the semantics of the
            SID.";
       }
-      choice sid {
-        description
-          "Choice of either a 20-bit MPLS label or 32-bit index into
-           an advertised label space.";
-        case sid-label {
-          leaf label-value {
-            type uint32 {
-              range "0 .. 1048575";
-            }
-            description
-              "A 20-bit MPLS Label";
-          }
-        }
-        case sid-index {
-          leaf index-value {
-            type uint32;
-            description
-              "Index into a label space advertised by this router.";
-          }
-        }
-      }
+      uses sid-tlv-encoding;
     }
   }
 
@@ -498,19 +518,19 @@ module ietf-isis-sr-mpls {
         description
           "SR Capability sub-TLV flags.";
       }
-    }
-    container global-blocks {
-      description
-        "Segment Routing Global Blocks.";
-      list global-block {
+      container global-blocks {
         description
-          "Segment Routing Global Block.";
-        leaf range-size {
-          type uint32;
+          "Segment Routing Global Blocks.";
+        list global-block {
           description
-            "The SID range.";
+            "Segment Routing Global Block.";
+          leaf range-size {
+            type rt-types:uint24;
+            description
+              "The SID range.";
+          }
+          uses sid-sub-tlv;
         }
-        uses sid-sub-tlv;
       }
     }
   }
@@ -640,11 +660,7 @@ module ietf-isis-sr-mpls {
           description
             "Algorithm to be used for path computation.";
         }
-        leaf sid {
-          type uint32;
-          description
-            "Value of the prefix-SID.";
-        }
+        uses sid-tlv-encoding;
       }
     }
   }
@@ -685,11 +701,7 @@ module ietf-isis-sr-mpls {
              associated with the SID value. This is only
              used on LAN adjacencies.";
         }
-        leaf sid {
-          type uint32;
-          description
-            "Value of the Adj-SID.";
-        }
+        uses sid-tlv-encoding;
       }
     }
   }
@@ -1147,10 +1159,14 @@ module ietf-isis-sr-mpls {
     <section anchor="Acknowledgements" toc="default" numbered="true">
       <name>Acknowledgements</name>
       <t>
-        Authors would like to thank Derek Yeung,Yi Yang
+        The authors would like to thank Pushpasis Sarkar, Derek Yeung,Yi Yang
         for their major contributions to the draft. Also thank Reshad Rahman, Tom Petch,
-        and Renato Westphal for their thorough reviews and helpful comments.
+        and Renato Westphal for their thorough reviews and helpful comments. 
       </t>
+      <t>
+        The authors wish to thank Mohamed Boucadair and Ketan Talaulikar for
+        extensive AD reviews for the IESG Telechat.  Thanks to Eric Vyncke
+        and Mahesh Jethanandani for review comments.</t>
       <t>
         Author affiliation with The MITRE Corporation is provided for
         identification purposes only, and is not intended to convey or imply MITRE's
@@ -1409,16 +1425,16 @@ module: ietf-isis-sr-mpls
           /isis:router-capability:
     +--ro sr-capability
     |  +--ro sr-capability-flag*   identityref
-    +--ro global-blocks
-    |  +--ro global-block* []
-    |     +--ro range-size?    uint32
-    |     +--ro sid-sub-tlv
-    |        +--ro length?              uint8
-    |        +--ro (sid)?
-    |           +--:(sid-label)
-    |           |  +--ro label-value?   uint32
-    |           +--:(sid-index)
-    |              +--ro index-value?   uint32
+    |  +--ro global-blocks
+    |     +--ro global-block* []
+    |        +--ro range-size?    rt-types:uint24
+    |        +--ro sid-sub-tlv
+    |           +--ro length?              uint8
+    |           +--ro (sid)?
+    |              +--:(sid-label)
+    |              |  +--ro label-value?   uint32
+    |              +--:(sid-index)
+    |                 +--ro index-value?   uint32
     +--ro sr-algorithms
     |  +--ro sr-algorithm*   identityref
     +--ro local-blocks
@@ -1443,7 +1459,11 @@ module: ietf-isis-sr-mpls
           |  +--ro flag*   identityref
           +--ro weight?          uint8
           +--ro neighbor-id?     isis:system-id
-          +--ro sid?             uint32
+          +--ro (sid)?
+             +--:(sid-label)
+             |  +--ro label-value?   uint32
+             +--:(sid-index)
+                +--ro index-value?   uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:mt-is-neighbor/isis:neighbor
@@ -1454,7 +1474,11 @@ module: ietf-isis-sr-mpls
           |  +--ro flag*   identityref
           +--ro weight?          uint8
           +--ro neighbor-id?     isis:system-id
-          +--ro sid?             uint32
+          +--ro (sid)?
+             +--:(sid-label)
+             |  +--ro label-value?   uint32
+             +--:(sid-index)
+                +--ro index-value?   uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:extended-ipv4-reachability
@@ -1464,7 +1488,11 @@ module: ietf-isis-sr-mpls
           +--ro prefix-sid-flags
           |  +--ro flag*   identityref
           +--ro algorithm?          identityref
-          +--ro sid?                uint32
+          +--ro (sid)?
+             +--:(sid-label)
+             |  +--ro label-value?   uint32
+             +--:(sid-index)
+                +--ro index-value?   uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:mt-extended-ipv4-reachability
@@ -1474,7 +1502,11 @@ module: ietf-isis-sr-mpls
           +--ro prefix-sid-flags
           |  +--ro flag*   identityref
           +--ro algorithm?          identityref
-          +--ro sid?                uint32
+          +--ro (sid)?
+             +--:(sid-label)
+             |  +--ro label-value?   uint32
+             +--:(sid-index)
+                +--ro index-value?   uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:ipv6-reachability/isis:prefixes:
@@ -1483,7 +1515,11 @@ module: ietf-isis-sr-mpls
           +--ro prefix-sid-flags
           |  +--ro flag*   identityref
           +--ro algorithm?          identityref
-          +--ro sid?                uint32
+          +--ro (sid)?
+             +--:(sid-label)
+             |  +--ro label-value?   uint32
+             +--:(sid-index)
+                +--ro index-value?   uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp/isis:mt-ipv6-reachability
@@ -1493,7 +1529,11 @@ module: ietf-isis-sr-mpls
           +--ro prefix-sid-flags
           |  +--ro flag*   identityref
           +--ro algorithm?          identityref
-          +--ro sid?                uint32
+          +--ro (sid)?
+             +--:(sid-label)
+             |  +--ro label-value?   uint32
+             +--:(sid-index)
+                +--ro index-value?   uint32
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/isis:isis/isis:database
           /isis:levels/isis:lsp:
@@ -1509,7 +1549,11 @@ module: ietf-isis-sr-mpls
     |     |        +--ro prefix-sid-flags
     |     |        |  +--ro flag*   identityref
     |     |        +--ro algorithm?          identityref
-    |     |        +--ro sid?                uint32
+    |     |        +--ro (sid)?
+    |     |           +--:(sid-label)
+    |     |           |  +--ro label-value?   uint32
+    |     |           +--:(sid-index)
+    |     |              +--ro index-value?   uint32
     |     +--ro sid-sub-tlv* []
     |     |  +--ro sid-sub-tlv
     |     |     +--ro length?              uint8
@@ -1535,7 +1579,11 @@ module: ietf-isis-sr-mpls
           |        +--ro prefix-sid-flags
           |        |  +--ro flag*   identityref
           |        +--ro algorithm?          identityref
-          |        +--ro sid?                uint32
+          |        +--ro (sid)?
+          |           +--:(sid-label)
+          |           |  +--ro label-value?   uint32
+          |           +--:(sid-index)
+          |              +--ro index-value?   uint32
           +--ro sid-sub-tlv* []
           |  +--ro sid-sub-tlv
           |     +--ro length?              uint8
